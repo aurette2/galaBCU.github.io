@@ -7,7 +7,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - <?= SITE_NAME ?></title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Style général */
+        body {
+            background-color: #002147; /* Bleu nuit */
+            color: #FFD700; /* Or */
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Navbar */
+        .navbar-dark .navbar-brand {
+            color: #FFD700; /* Or */
+        }
+
+        .navbar-dark .nav-link {
+            color: #FFD700; /* Or */
+        }
+
+        .navbar-dark .nav-link:hover {
+            color: #e6b800; /* Or plus foncé */
+        }
+
+        /* Section Accueil */
+        .container h1 {
+            margin-top: 100px;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .container p {
+            font-size: 1.2rem;
+        }
+
+        .btn-primary {
+            background-color: #FFD700; /* Or */
+            color: #002147; /* Bleu nuit */
+            border: none;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6b800; /* Or légèrement plus foncé */
+            color: #001f3f; /* Bleu nuit plus foncé */
+        }
+
+        /* Section À propos */
+        #about {
+            background-color: #001f3f; /* Bleu nuit foncé */
+            padding: 50px 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+
+        #about h2 {
+            color: #FFD700; /* Or */
+            font-size: 2.5rem;
+        }
+
+        #about p {
+            color: #fff; /* Blanc */
+            font-size: 1.2rem;
+        }
+
+        /* Section Contact */
+        .contact .form-control {
+            background-color: #001f3f;
+            border: 1px solid #FFD700;
+            color: #FFD700;
+        }
+
+        .contact .form-control:focus {
+            background-color: #002147;
+            border-color: #FFD700;
+            box-shadow: 0 0 5px #FFD700;
+        }
+
+        .contact button {
+            background-color: #FFD700;
+            color: #002147;
+            border: none;
+            font-weight: bold;
+        }
+
+        .contact button:hover {
+            background-color: #e6b800;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #001f3f;
+            color: #FFD700;
+        }
+    </style>
 </head>
 
 <body>
@@ -38,7 +129,7 @@
     </nav>
 
     <!-- Section Accueil -->
-    <div class="container text-center mt-5 pt-5">
+    <div class="container text-center">
         <h1>Bienvenue au <?= SITE_NAME ?></h1>
         <p>Participez à un événement inoubliable le 14 février.</p>
         <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
@@ -51,68 +142,53 @@
     </div>
 
     <!-- Section Contact -->
-    <section id="contact" class="contact">
-      <div class="container" data-aos="fade-up">
-
-        <div class="row mt-5">
-
-          <div class="col-lg-4">
-            <div class="info">
-              <div class="address">
-                <i class="bi bi-geo-alt"></i>
-                <h4>Localisation:</h4>
-                <p>A108 Adam Street, New York, NY 535022</p>
-              </div>
-
-              <div class="email">
-                <i class="bi bi-envelope"></i>
-                <h4>Email:</h4>
-                <p>info@example.com</p>
-              </div>
-
-              <div class="phone">
-                <i class="bi bi-phone"></i>
-                <h4>Tel:</h4>
-                <p>+229 01</p>
-              </div>
-
+    <section id="contact" class="contact mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="info">
+                        <div class="address">
+                            <h4>Localisation:</h4>
+                            <p>AGBOKOU</p>
+                        </div>
+                        <div class="email">
+                            <h4>Email:</h4>
+                            <p>info@example.com</p>
+                        </div>
+                        <div class="phone">
+                            <h4>Tel:</h4>
+                            <p>+229 01</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <input type="text" name="name" class="form-control" id="name" placeholder="Votre Nom" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Votre Email" required>
+                            </div>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Objet" required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+                        </div> <br><br>
+                        <div class="text-center mt-3">
+                            <button type="submit">Envoyer</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-          </div>
-
-          <div class="col-lg-8 mt-5 mt-lg-0">
-
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Votre Nom" required>
-                </div>
-                <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Votre Email" required>
-                </div>
-              </div>
-              <div class="form-group mt-3">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="Objet" required>
-              </div>
-              <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-              </div>
-              <div class="my-3">
-                <div class="loading">Chargement</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Votre message a été envoyé. Merci!</div>
-              </div>
-              <div class="text-center"><button type="submit">Envoyer</button></div>
-            </form>
-
-          </div>
-
         </div>
+    </section>
+<br><br>
 
-      </div>
-    </section><!-- End Contact Section -->
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
+    <footer class="text-center py-3">
         <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Tous droits réservés.</p>
     </footer>
 

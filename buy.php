@@ -1,14 +1,17 @@
-<?php include 'db.php';
+<?php 
+include 'db.php';
 include 'config.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
+    $prenom = $_POST['prenom'];
     $email = $_POST['email'];
+    $telephone = $_POST['telephone'];
     $type = $_POST['type'];
-    $quantity = $_POST['quantity'];
 
     // Enregistrement dans la base de données
-    $stmt = $pdo->prepare("INSERT INTO tickets (name, email, type, quantity, status) VALUES (?, ?, ?, ?, 'pending')");
-    $stmt->execute([$name, $email, $type, $quantity]);
+    $stmt = $pdo->prepare("INSERT INTO tickets (name, prenom, email, telephone, type, status) VALUES (?, ?, ?, ?, ?, 'pending')");
+    $stmt->execute([$name, $prenom, $email, $telephone, $type]);
 
     // Redirection après l'insertion
     header('Location: confirm.php');
@@ -23,7 +26,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Achat - <?= SITE_NAME ?></title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Style général */
+        body {
+            background-color: #002147; /* Bleu nuit */
+            color: #FFD700; /* Or */
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Navbar */
+        .navbar-dark .navbar-brand {
+            color: #FFD700;
+        }
+
+        .navbar-dark .nav-link {
+            color: #FFD700;
+        }
+
+        .navbar-dark .nav-link:hover {
+            color: #e6b800;
+        }
+
+        /* Section Formulaire */
+        .container {
+            margin-top: 100px;
+        }
+
+        h1 {
+            color: #FFD700; /* Or */
+            font-weight: bold;
+        }
+
+        label {
+            color: #FFD700; /* Or */
+        }
+
+        .form-control {
+            background-color: #001f3f; /* Bleu nuit foncé */
+            border: 1px solid #FFD700;
+            color: #FFD700;
+        }
+
+        .form-control:focus {
+            background-color: #002147;
+            border-color: #FFD700;
+            box-shadow: 0 0 5px #FFD700;
+        }
+
+        .btn-primary {
+            background-color: #FFD700; /* Or */
+            color: #002147; /* Bleu nuit */
+            border: none;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6b800; /* Or plus foncé */
+        }
+
+        /* Footer */
+        footer {
+            background-color: #001f3f;
+            color: #FFD700;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Accueil</a>
+                        <a class="nav-link active" href="index.php">Accueil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#about">À propos</a>
@@ -55,10 +121,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Fin Navbar -->
 
     <!-- Section d'achat de tickets -->
-    <div class="container mt-5 pt-5">
+    <div class="container">
         <h1 class="text-center">Achetez vos tickets</h1>
-
-        <!-- Formulaire d'achat de tickets -->
         <form method="POST">
             <div class="mb-3">
                 <label for="name" class="form-label">Nom</label>
@@ -66,8 +130,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="mb-3">
+                <label for="prenom" class="form-label">Prénom</label>
+                <input type="text" name="prenom" id="prenom" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" name="email" id="email" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="telephone" class="form-label">Téléphone</label>
+                <input type="text" name="telephone" id="telephone" class="form-control" required>
             </div>
 
             <div class="mb-3">
@@ -78,21 +152,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
             </div>
 
-            <div class="mb-3">
-                <label for="quantity" class="form-label">Quantité</label>
-                <input type="number" name="quantity" id="quantity" class="form-control" required>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Valider</button>
             </div>
-
-            <button type="submit" class="btn btn-primary">Valider</button>
         </form>
     </div>
     <!-- Fin Section d'achat de tickets -->
-    <br>
-    <br>    
+
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
+    <footer class="bg-dark text-white text-center py-3 mt-5">
         <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Tous droits réservés.</p>
     </footer>
+
     <script src="assets/js/bootstrap.bundle.min.js"></script>
 </body>
 
