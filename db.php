@@ -8,7 +8,7 @@ $password = ""; // Mot de passe MySQL
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Activation des erreurs PDO
-    echo "Connexion réussie à la base de données."; // Message de confirmation
+    //echo "Connexion réussie à la base de données."; // Message de confirmation
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage()); // Gestion des erreurs
 }

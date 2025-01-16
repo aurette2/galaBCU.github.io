@@ -1,5 +1,5 @@
 <?php
 // config.php - Paramètres globaux
-define('GALA BCU', 'Gala du 14 Février');
+define('SITE_NAME', 'GALA BCU');
 define('CURRENCY', 'CFA'); // Devise utilisée
 ?>

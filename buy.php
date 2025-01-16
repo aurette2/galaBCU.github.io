@@ -1,6 +1,5 @@
-<?php
-include 'db.php';
-
+<?php include 'db.php';
+include 'config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -22,18 +21,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achat de tickets - <?= SITE_NAME ?></title>
-
-    <!-- Liens vers les fichiers CSS locaux -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css"> <!-- Bootstrap local -->
-    <link rel="stylesheet" href="assets/css/style.css"> <!-- Votre fichier CSS personnalisé -->
-
-    <!-- Google Fonts (optionnel) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <title>Achat - <?= SITE_NAME ?></title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
-    <div class="container mt-5">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><?= SITE_NAME ?></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.php">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">À propos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="buy.php">Acheter un ticket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Fin Navbar -->
+
+    <!-- Section d'achat de tickets -->
+    <div class="container mt-5 pt-5">
         <h1 class="text-center">Achetez vos tickets</h1>
 
         <!-- Formulaire d'achat de tickets -->
@@ -64,10 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn btn-primary">Valider</button>
         </form>
     </div>
-
-    <!-- Liens vers les fichiers JS locaux -->
-    <script src="assets/js/bootstrap.min.js"></script> <!-- Bootstrap JS local -->
-    <script src="assets/js/script.js"></script>
+    <!-- Fin Section d'achat de tickets -->
+    <br>
+    <br>    
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Tous droits réservés.</p>
+    </footer>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
