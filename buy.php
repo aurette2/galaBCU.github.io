@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><?= SITE_NAME ?></a>
+            <a class="navbar-brand" href="index.php"><?= SITE_NAME ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -106,13 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a class="nav-link active" href="index.php">Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">À propos</a>
+                        <a class="nav-link" href="index.php#about">À propos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="buy.php">Acheter un ticket</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="index.php#contact">Contact</a>
                     </li>
                 </ul>
             </div>

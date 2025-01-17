@@ -98,6 +98,44 @@
             background-color: #001f3f;
             color: #FFD700;
         }
+        .carousel-caption {
+            position: absolute; /* Nécessaire pour le placement au-dessus de l'image */
+            top: 50%; /* Place le centre verticalement */
+            left: 50%; /* Place le centre horizontalement */
+            transform: translate(-50%, -50%); /* Ajuste pour centrer exactement */
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center; /* Aligne le texte au centre */
+
+        }
+
+        .carousel-caption h1 {
+            font-size: 2.55rem;
+            font-weight: bold;
+            color: #FFD700; /* Or */
+        }
+
+        .carousel-caption p {
+            font-size: 1.2rem;
+            color: #fff; /* Blanc */
+        }
+
+        .carousel .btn-primary {
+            background-color: #FFD700; /* Or */
+            color: #002147; /* Bleu nuit */
+            border: none;
+            font-weight: bold;
+        }
+
+        .carousel .btn-primary:hover {
+            background-color: #e6b800; /* Or plus foncé */
+        }
+
+        .carousel-item img {
+            height: 35vh;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -105,7 +143,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><?= SITE_NAME ?></a>
+            <a class="navbar-brand" href="index.php"><?= SITE_NAME ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -128,11 +166,52 @@
         </div>
     </nav>
 
-    <!-- Section Accueil -->
-    <div class="container text-center">
-        <h1>Bienvenue au <?= SITE_NAME ?></h1>
-        <p>Participez à un événement inoubliable le 14 février.</p>
-        <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
+    <!-- Section Accueil avec carousel -->
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="assets/images/slide1.jpg" class="d-block w-100" alt="Gala Image 1">
+                <div class="carousel-caption d-none d-md-block">
+                    <h1 class="text-uppercase">Bienvenue au <?= SITE_NAME ?></h1>
+                    <p>Rejoignez-nous pour une soirée exceptionnelle célébrant l'amour et l'humanité.</p>
+                    <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="assets/images/slide2.jpg" class="d-block w-100" alt="Gala Image 2">
+                <div class="carousel-caption d-none d-md-block">
+                    <h1 class="text-uppercase">14 Février 2025</h1>
+                    <p>Une soirée mémorable avec un dîner, des prestations artistiques et des surprises.</p>
+                    <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="assets/images/slide3.jpeg" class="d-block w-100" alt="Gala Image 3">
+                <div class="carousel-caption d-none d-md-block">
+                    <h1 class="text-uppercase">Cœurs Unis pour une Humanité Sensible</h1>
+                    <p>Un gala pour célébrer l'amour et renforcer les liens humains.</p>
+                    <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Précédent</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suivant</span>
+        </button>
     </div>
 
     <!-- Section À propos -->
