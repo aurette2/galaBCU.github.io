@@ -8,68 +8,66 @@
     <title>Accueil - <?= SITE_NAME ?></title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <style>
-        /* Style général */
+        /* General Styles */
         body {
-            background-color: #002147; /* Bleu nuit */
-            color: #FFD700; /* Or */
+            background-color: #002147; /* Dark Blue */
+            color: #FFD700; /* Gold */
             font-family: 'Arial', sans-serif;
         }
 
         /* Navbar */
         .navbar-dark .navbar-brand {
-            color: #FFD700; /* Or */
+            color: #FFD700;
         }
 
         .navbar-dark .nav-link {
-            color: #FFD700; /* Or */
+            color: #FFD700;
         }
 
         .navbar-dark .nav-link:hover {
-            color: #e6b800; /* Or plus foncé */
+            color: #e6b800;
         }
 
-        /* Section Accueil */
-        .container h1 {
+        /* Welcome Section */
+        .welcome-section {
             margin-top: 100px;
+            text-align: center;
+        }
+
+        .welcome-section h1 {
             font-size: 3rem;
             font-weight: bold;
         }
 
-        .container p {
+        .welcome-section p {
             font-size: 1.2rem;
         }
 
-        .btn-primary {
-            background-color: #FFD700; /* Or */
-            color: #002147; /* Bleu nuit */
-            border: none;
-            font-weight: bold;
-        }
-
-        .btn-primary:hover {
-            background-color: #e6b800; /* Or légèrement plus foncé */
-            color: #001f3f; /* Bleu nuit plus foncé */
-        }
-
-        /* Section À propos */
+        /* About Section */
         #about {
-            background-color: #001f3f; /* Bleu nuit foncé */
+            background-color: #001f3f; /* Darker Blue */
             padding: 50px 20px;
             border-radius: 10px;
             margin-top: 50px;
         }
 
         #about h2 {
-            color: #FFD700; /* Or */
+            color: #FFD700;
             font-size: 2.5rem;
         }
 
         #about p {
-            color: #fff; /* Blanc */
+            color: #fff; /* White */
             font-size: 1.2rem;
         }
 
-        /* Section Contact */
+        #about ul {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        /* Contact Section */
         .contact .form-control {
             background-color: #001f3f;
             border: 1px solid #FFD700;
@@ -105,14 +103,14 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><?= SITE_NAME ?></a>
+            <a class="navbar-brand" href="index.php"><?= SITE_NAME ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Accueil</a>
+                        <a class="nav-link active" href="index.php">Accueil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#about">À propos</a>
@@ -128,20 +126,34 @@
         </div>
     </nav>
 
-    <!-- Section Accueil -->
-    <div class="container text-center">
+    <!-- Welcome Section -->
+    <div class="container welcome-section">
         <h1>Bienvenue au <?= SITE_NAME ?></h1>
-        <p>Participez à un événement inoubliable le 14 février.</p>
+        <p>
+            Rejoignez-nous le <strong>14 février 2025</strong> pour une soirée mémorable. 
+            Le Gala "Berceau des Cœurs Unis" célèbrera l'amour et renforcera notre humanité à travers 
+            un dîner de gala savoureux, des prestations artistiques de renom, et un concours de déclaration d'amour.
+        </p>
         <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
     </div>
 
-    <!-- Section À propos -->
+    <!-- About Section -->
     <div id="about" class="container mt-5">
         <h2 class="text-center">À propos de <?= SITE_NAME ?></h2>
-        <p class="text-center">Nous organisons un événement spécial pour célébrer la Saint-Valentin. Venez profiter d'une soirée inoubliable avec des activités, des spectacles et bien plus encore !</p>
+        <p class="text-center">
+            Le Gala "Berceau des Cœurs Unis" est une initiative de <strong>Event Joy</strong>, filiale de STANISLAS GROUP, spécialisée 
+            dans l'organisation d'événements culturels et corporatifs. Notre mission est de célébrer l'amour et de promouvoir 
+            une humanité plus unie et engagée.
+        </p>
+        <ul>
+            <li><strong>Date :</strong> 14 février 2025</li>
+            <li><strong>Lieu :</strong> À définir</li>
+            <li><strong>Prix :</strong> 30 000 FCFA pour un couple, 20 000 FCFA pour un participant solo</li>
+            <li><strong>Activités :</strong> Dîner de gala, prestations artistiques, concours de déclaration d'amour, et surprise-party.</li>
+        </ul>
     </div>
 
-    <!-- Section Contact -->
+    <!-- Contact Section -->
     <section id="contact" class="contact mt-5">
         <div class="container">
             <div class="row">
@@ -176,7 +188,7 @@
                         </div>
                         <div class="form-group mt-3">
                             <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-                        </div> <br><br>
+                        </div>
                         <div class="text-center mt-3">
                             <button type="submit">Envoyer</button>
                         </div>
@@ -185,7 +197,6 @@
             </div>
         </div>
     </section>
-<br><br>
 
     <!-- Footer -->
     <footer class="text-center py-3">
