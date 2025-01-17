@@ -215,9 +215,25 @@
     </div>
 
     <!-- Section À propos -->
-    <div id="about" class="container mt-5" style="max-width: 600px; margin: 0 auto;">
+    <div id="about" class="container mt-5" style="max-width: 800px; margin: 0 auto;">
     <h2 class="text-center">À propos de <?= SITE_NAME ?></h2>
-    <p class="text-center">Nous organisons un événement spécial pour célébrer la Saint-Valentin. <br>Venez profiter d'une soirée inoubliable avec des activités, des spectacles et bien plus encore !</p>
+    <p class="text-center">
+            Le Gala "Berceau des Cœurs Unis" est une initiative de <strong>Event Joy</strong>, filiale de STANISLAS GROUP, spécialisée 
+            dans l'organisation d'événements culturels et corporatifs. Notre mission est de célébrer l'amour et de promouvoir 
+            une humanité plus unie et engagée.
+        </p>
+        <ul>
+            <li><strong>Date :</strong> 14 février 2025</li>
+            <li><strong>Lieu :</strong> À définir</li>
+            <li><strong>Prix :</strong> 30 000 FCFA pour un couple, 20 000 FCFA pour un participant solo</li>
+            <li><strong>Activités :</strong> Dîner de gala, prestations artistiques, concours de déclaration d'amour, et surprise-party.</li>
+        </ul>
+        <p>
+            Rejoignez-nous le <strong>14 février 2025</strong> pour une soirée mémorable. 
+            Le Gala "Berceau des Cœurs Unis" célèbrera l'amour et renforcera notre humanité à travers 
+            un dîner de gala savoureux, des prestations artistiques de renom, et un concours de déclaration d'amour.
+        </p>
+    <!-- <p class="text-center">Nous organisons un événement spécial pour célébrer la Saint-Valentin. <br>Venez profiter d'une soirée inoubliable avec des activités, des spectacles et bien plus encore !</p> -->
 </div>
 
 
@@ -227,10 +243,6 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="info">
-                        <div class="address">
-                            <h4>Localisation:</h4>
-                            <p>AGBOKOU</p>
-                        </div>
                         <div class="email">
                             <h4>Email:</h4>
                             <p>info@example.com</p>
