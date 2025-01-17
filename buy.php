@@ -27,6 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket->execute([$ticketId]);
     $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
 
+    
+
+
     // if ($ticketDetails && $ticketDetails['status'] === 'confirmed') {
         // Générer le QR code
         $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
@@ -37,44 +40,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   "Status: {$ticketDetails['status']}\n" .
                   "Created At: {$ticketDetails['created_at']}";
 
+        
+
         $qrCode = new QrCode($qrData);
-        $qrCode->setSize(300);
+        // $qrCode->setSize(300);
         $writer = new PngWriter();
         $qrFile = "qrcodes/ticket_{$ticketDetails['id']}.png";
         $writer->write($qrCode)->saveToFile($qrFile);
+        echo "<pre>";
+        print_r($ticketDetails);
+        echo "</pre>";
 
         // Envoyer un email avec le QR code
-        // $mail = new PHPMailer(true);
-        // try {
-        //     // Configuration SMTP
-        //     $mail->isSMTP();
-        //     $mail->Host = 'smtp.example.com'; // Remplacez par votre hôte SMTP
-        //     $mail->SMTPAuth = true;
-        //     $mail->Username = 'your-email@example.com'; // Votre email SMTP
-        //     $mail->Password = 'your-password'; // Mot de passe SMTP
-        //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        //     $mail->Port = 587;
+        $mail = new PHPMailer(true);
+        
+        try {
+            // Configuration SMTP
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com'; // Remplacez par votre hôte SMTP
+            $mail->SMTPAuth = true;
+            $mail->Username = 'charmeyebad2@gmail.com'; // Votre email SMTP
+            $mail->Password = 'YEBAD563564c2'; // Mot de passe SMTP
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            
+            
 
-        //     // Destinataire
-        //     $mail->setFrom('your-email@example.com', 'Gala Organisateur');
-        //     $mail->addAddress($ticketDetails['email'], "{$ticketDetails['name']} {$ticketDetails['prenom']}");
+            // Destinataire
+            $mail->setFrom('mauricecodjo224@gmail.com', 'Gala Organisateur');
+            $mail->addAddress($ticketDetails['email'], "{$ticketDetails['name']} {$ticketDetails['prenom']}");
 
-        //     // Pièce jointe : QR code
-        //     $mail->addAttachment($qrFile);
+            // Pièce jointe : QR code
+            $mail->addAttachment($qrFile);
 
-        //     // Contenu de l'email
-        //     $mail->isHTML(true);
-        //     $mail->Subject = 'Confirmation de votre achat de ticket';
-        //     $mail->Body    = "<h1>Merci pour votre achat !</h1><p>Voici votre ticket pour le Gala :</p>";
-        //     $mail->AltBody = 'Merci pour votre achat !';
+            // Contenu de l'email
+            $mail->isHTML(true);
+            $mail->Subject = 'Confirmation de votre achat de ticket';
+            $mail->Body    = "<h1>Merci pour votre achat !</h1><p>Voici votre ticket pour le Gala :</p>";
+            $mail->AltBody = 'Merci pour votre achat !';
 
-        //     $mail->send();
-        // } catch (Exception $e) {
-        //     echo "Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}";
-        // }
+            $mail->send();
+        } catch (Exception $e) {
+            echo "Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}";
+        }
 
         // Rediriger vers la page de confirmation
-        header('Location: confirmation.php');
+        header('Location: confirm.php');
         exit;
     // } else {
     //     // Si le statut n'est pas confirmé, afficher un message ou rediriger
@@ -227,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="mb-3">
                 <label for="telephone" class="form-label">Téléphone</label>
-                <input type="text" name="telephone" id="telephone" class="form-control" required>
+                <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" class="form-control" placeholder="0162898017" required>
             </div>
 
             <div class="mb-3">
