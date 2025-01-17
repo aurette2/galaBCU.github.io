@@ -53,7 +53,7 @@
 
         /* Section À propos */
         #about {
-            background-color: #001f3f; /* Bleu nuit foncé */
+            background-color:rgb(4, 53, 101); /* Bleu nuit foncé */
             padding: 50px 20px;
             border-radius: 10px;
             margin-top: 50px;
@@ -136,10 +136,11 @@
     </div>
 
     <!-- Section À propos -->
-    <div id="about" class="container mt-5">
-        <h2 class="text-center">À propos de <?= SITE_NAME ?></h2>
-        <p class="text-center">Nous organisons un événement spécial pour célébrer la Saint-Valentin. Venez profiter d'une soirée inoubliable avec des activités, des spectacles et bien plus encore !</p>
-    </div>
+    <div id="about" class="container mt-5" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="text-center">À propos de <?= SITE_NAME ?></h2>
+    <p class="text-center">Nous organisons un événement spécial pour célébrer la Saint-Valentin. <br>Venez profiter d'une soirée inoubliable avec des activités, des spectacles et bien plus encore !</p>
+</div>
+
 
     <!-- Section Contact -->
     <section id="contact" class="contact mt-5">

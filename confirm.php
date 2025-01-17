@@ -53,7 +53,7 @@
     </style>
 </head>
 <body>
-    <div class="confirmation-box">
+    <div class="confirmation-box" style="max-width: 460px; margin: 0 auto;">
         <h1>Merci pour votre achat !</h1>
         <p>Un email de confirmation vous a été envoyé. Nous avons hâte de vous voir au Gala du 14 Février !</p>
         <a href="index.php">Retour à l'accueil</a>
