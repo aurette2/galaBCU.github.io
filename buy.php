@@ -18,16 +18,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = $_POST['prenom'];
     $email = $_POST['email'];
     $telephone = $_POST['telephone'];
-    $type = $_POST['type'];
+    $type = $_POST['type']; // Solo or Couple
+    $preference_vin = $_POST['preference_vin'];
+    $shooting = $_POST['shooting']; // Yes or No
 
-    // Enregistrement dans la base de données
-    $stmt = $pdo->prepare("INSERT INTO tickets (name, prenom, email, telephone, type, status) VALUES (?, ?, ?, ?, ?, 'pending')");
-    $stmt->execute([$name, $prenom, $email, $telephone, $type]);
+    // Base cost calculation
+    $cost = 0;
+    if ($type === 'Solo') {
+        $cost += 20000; // Add 20,000 for Solo ticket
+    } elseif ($type === 'Couple') {
+        $cost += 30000; // Add 30,000 for Couple ticket
+    }
 
-    // Récupérer l'ID du ticket inséré
+    // Add additional cost for shooting
+    if ($shooting === 'yes') {
+        $cost += 1000; // Add 1,000 for the shooting option
+    }
+
+    // Save the ticket details into the database
+    $stmt = $pdo->prepare("INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
+    $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting]);
+
+    // Retrieve the inserted ticket ID
     $ticketId = $pdo->lastInsertId();
 
-    // Vérifier le statut du ticket
+    // Fetch the ticket details
     $ticket = $pdo->prepare("SELECT * FROM tickets WHERE id = ?");
     $ticket->execute([$ticketId]);
     $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
@@ -38,19 +53,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // if ($ticketDetails && $ticketDetails['status'] === 'confirmed') {
         // Générer le QR code
         $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
-                  "Name: {$ticketDetails['name']} {$ticketDetails['prenom']}\n" .
-                  "Email: {$ticketDetails['email']}\n" .
-                  "Telephone: {$ticketDetails['telephone']}\n" .
-                  "Type: {$ticketDetails['type']}\n" .
-                  "Status: {$ticketDetails['status']}\n" .
-                  "Created At: {$ticketDetails['created_at']}";
+                    "Name: {$ticketDetails['name']} {$ticketDetails['prenom']}\n" .
+                    "Email: {$ticketDetails['email']}\n" .
+                    "Telephone: {$ticketDetails['telephone']}\n" .
+                    "Type: {$ticketDetails['type']}\n" .
+                    "Préférence en vin: {$ticketDetails['preference_vin']}\n" .
+                    "Shooting: {$ticketDetails['shooting']} (Coût additionnel: 1000F)\n" .
+                    "Total Cost: {$cost}F\n" .
+                    "Status: {$ticketDetails['status']}\n" .
+                    "Created At: {$ticketDetails['created_at']}";
 
         
 
         $qrCode = new QrCode($qrData);
         // $qrCode->setSize(300);
         $writer = new PngWriter();
-        $qrFile = "qrcodes/ticket_{$ticketDetails['id']}.png";
+        $qrFile = "qrcodes/ticket_{$ticketDetails['name']}.png";
         $writer->write($qrCode)->saveToFile($qrFile);
         echo "<pre>";
         print_r($ticketDetails);
@@ -89,14 +107,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}";
         }
 
-        // Rediriger vers la page de confirmation
-        header('Location: confirm.php');
+        // Rediriger vers la page de confirmation avec le chemin du QR code
+        header("Location: confirm.php?qrFile=" . urlencode($qrFile));
         exit;
     // } else {
     //     // Si le statut n'est pas confirmé, afficher un message ou rediriger
     //     echo "Le statut du ticket est toujours en attente. Veuillez réessayer.";
     //     exit;
     // }
+
+        
+
 }
 ?>
 
@@ -228,38 +249,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="form-container">
         <h1>Achetez vos tickets</h1>
         <form method="POST">
-            <div class="mb-3">
-                <label for="name" class="form-label">Nom</label>
-                <input type="text" name="name" id="name" class="form-control" required>
-            </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <input type="text" name="name" id="name" class="form-control" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="prenom" class="form-label">Prénom</label>
-                <input type="text" name="prenom" id="prenom" class="form-control" required>
-            </div>
+                <div class="mb-3">
+                    <label for="prenom" class="form-label">Prénom</label>
+                    <input type="text" name="prenom" id="prenom" class="form-control" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" id="email" class="form-control" required>
-            </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="telephone" class="form-label">Téléphone</label>
-                <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" class="form-control" placeholder="0162898017" required>
-            </div>
+                <div class="mb-3">
+                    <label for="telephone" class="form-label">Téléphone</label>
+                    <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" class="form-control" placeholder="0162898017" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="type" class="form-label">Type de ticket</label>
-                <select name="type" id="type" class="form-select" required>
-                    <option value="Solo">Solo</option>
-                    <option value="Couple">Couple</option>
-                </select>
-            </div>
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type de ticket</label>
+                    <select name="type" id="type" class="form-select" required>
+                        <option value="Solo">Solo</option>
+                        <option value="Couple">Couple</option>
+                    </select>
+                </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary w-100">Valider</button>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label for="preference_vin" class="form-label">Préférence en vin</label>
+                    <select name="preference_vin" id="preference_vin" class="form-select" required>
+                        <option value="vin blanc">Vin Blanc</option>
+                        <option value="vin rouge">Vin Rouge</option>
+                        <option value="bierre">Bière</option>
+                        <option value="sucrerie">Sucrerie</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="shooting" class="form-label">Shooting avec l'artiste</label>
+                    <select name="shooting" id="shooting" class="form-select" required>
+                        <option value="no">Non</option>
+                        <option value="yes">Oui (+1000f)</option>
+                    </select>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-100">Valider</button>
+                </div>
+</form>
     </div>
 
     <!-- Footer -->
