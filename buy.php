@@ -3,6 +3,11 @@ include 'db.php';
 include 'config.php';
 require 'vendor/autoload.php'; // Include libraries for QR code and email handling
 
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/SMTP.php';
+
+
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -94,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 

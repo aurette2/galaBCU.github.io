@@ -69,30 +69,6 @@
             font-size: 1.2rem;
         }
 
-        /* Section Contact */
-        .contact .form-control {
-            background-color: #001f3f;
-            border: 1px solid #FFD700;
-            color: #FFD700;
-        }
-
-        .contact .form-control:focus {
-            background-color: #002147;
-            border-color: #FFD700;
-            box-shadow: 0 0 5px #FFD700;
-        }
-
-        .contact button {
-            background-color: #FFD700;
-            color: #002147;
-            border: none;
-            font-weight: bold;
-        }
-
-        .contact button:hover {
-            background-color: #e6b800;
-        }
-
         /* Footer */
         footer {
             background-color: #001f3f;
@@ -111,13 +87,13 @@
         }
 
         .carousel-caption h1 {
-            font-size: 2.55rem;
+            font-size: 0.9rem;
             font-weight: bold;
             color: #FFD700; /* Or */
         }
 
         .carousel-caption p {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #fff; /* Blanc */
         }
 
@@ -133,7 +109,7 @@
         }
 
         .carousel-item img {
-            height: 35vh;
+            height: 39vh;
             object-fit: cover;
         }
     </style>
@@ -180,7 +156,7 @@
             <div class="carousel-item active">
                 <img src="assets/images/slide1.jpg" class="d-block w-100" alt="Gala Image 1">
                 <div class="carousel-caption d-none d-md-block">
-                    <h1 class="text-uppercase">Bienvenue au <?= SITE_NAME ?></h1>
+                    <h1 class="text-uppercase">Bienvenue au GALA BCU </h1>
                     <p>Rejoignez-nous pour une soirée exceptionnelle célébrant l'amour et l'humanité.</p>
                     <a href="buy.php" class="btn btn-primary">Acheter un ticket</a>
                 </div>
@@ -237,46 +213,6 @@
 </div>
 
 
-    <!-- Section Contact -->
-    <section id="contact" class="contact mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="info">
-                        <div class="email">
-                            <h4>Email:</h4>
-                            <p>info@example.com</p>
-                        </div>
-                        <div class="phone">
-                            <h4>Tel:</h4>
-                            <p>+229 01</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-8">
-                    <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <input type="text" name="name" class="form-control" id="name" placeholder="Votre Nom" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Votre Email" required>
-                            </div>
-                        </div>
-                        <div class="form-group mt-3">
-                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Objet" required>
-                        </div>
-                        <div class="form-group mt-3">
-                            <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-                        </div> <br><br>
-                        <div class="text-center mt-3">
-                            <button type="submit">Envoyer</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
 <br><br>
 
     <!-- Footer -->
