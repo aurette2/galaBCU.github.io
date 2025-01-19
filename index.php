@@ -112,6 +112,19 @@
             height: 39vh;
             object-fit: cover;
         }
+        /* Section des lieux */
+        #gala-location-carousel .carousel-item img {
+            height: 80vh;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        #gala-location-carousel .carousel-caption {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -188,6 +201,89 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Suivant</span>
         </button>
+    </div>
+
+    <!-- Section Lieu du Gala -->
+    <div id="gala-location" class="container mt-5">
+        <h2 class="text-center mb-4">Quelques details en images</h2>
+        <div id="gala-location-carousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="assets/images/img01.png" class="d-block w-100" alt="Lieu 1">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Un cadre élégant et prestigieux pour une soirée mémorable.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img02.png" class="d-block w-100" alt="Lieu 2">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Des décors somptueux pour célébrer l'amour.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img03.png" class="d-block w-100" alt="Lieu 3">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Une ambiance chaleureuse et festive vous attend.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img04.png" class="d-block w-100" alt="Lieu 2">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Des décors somptueux pour célébrer l'amour.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img05.png" class="d-block w-100" alt="Lieu 3">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Une ambiance chaleureuse et festive vous attend.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img06.png" class="d-block w-100" alt="Lieu 2">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Des décors somptueux pour célébrer l'amour.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img07.png" class="d-block w-100" alt="Lieu 3">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Une ambiance chaleureuse et festive vous attend.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/img08.png" class="d-block w-100" alt="Lieu 2">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Des décors somptueux pour célébrer l'amour.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/" class="d-block w-100" alt="Lieu 3">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Une ambiance chaleureuse et festive vous attend.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/" class="d-block w-100" alt="Lieu 2">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Des décors somptueux pour célébrer l'amour.</p>
+                    </div> -->
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/" class="d-block w-100" alt="Lieu 3">
+                    <!-- <div class="carousel-caption d-none d-md-block">
+                        <p>Une ambiance chaleureuse et festive vous attend.</p>
+                    </div> -->
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#gala-location-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#gala-location-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+            </button>
+        </div>
     </div>
 
     <!-- Section À propos -->
