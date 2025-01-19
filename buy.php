@@ -82,24 +82,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com'; // Remplacez par votre hôte SMTP
             $mail->SMTPAuth = true;
-            $mail->Username = 'charmeyebad2@gmail.com'; // Votre email SMTP
-            $mail->Password = 'YEBAD563564c2'; // Mot de passe SMTP
+            $mail->Username = 'eventjoy.gala@gmail.com'; // Votre email SMTP
+            $mail->Password = 'EventJoyGala2024'; // Mot de passe SMTP
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+            $mail->Port = 587; // TLS port
             
             
 
             // Destinataire
-            $mail->setFrom('mauricecodjo224@gmail.com', 'Gala Organisateur');
+            $mail->setFrom('eventjoy.gala@gmail.com', 'Gala Organisateur');
             $mail->addAddress($ticketDetails['email'], "{$ticketDetails['name']} {$ticketDetails['prenom']}");
 
             // Pièce jointe : QR code
-            $mail->addAttachment($qrFile);
+            $mail->addAttachment($qrFile,"Code QR de l'evenement");
+            // $mail->addAttachment('path/to/event_details.pdf', "Ticket de l'evenement"); // Another example file
+
 
             // Contenu de l'email
             $mail->isHTML(true);
             $mail->Subject = 'Confirmation de votre achat de ticket';
-            $mail->Body    = "<h1>Merci pour votre achat !</h1><p>Voici votre ticket pour le Gala :</p>";
+            $mail->Body    = "<h1>Merci pour votre achat !</h1><p>Voici votre ticket pour le Gala.</p> <p><strong>Détails du ticket :</strong></p>
+                                <ul>
+                                    <li><strong>Nom et prenoms:</strong> {$ticketDetails['name']} {$ticketDetails['prenom']}</li>
+                                    <li><strong>Email :</strong> {$ticketDetails['email']}</li>
+                                    <li><strong>Téléphone :</strong> {$ticketDetails['telephone']}</li>
+                                    <li><strong>Type de ticket :</strong> {$ticketDetails['type']}</li>
+                                    <li><strong>Préférence en vin :</strong> {$ticketDetails['preference_vin']}</li>
+                                    <li><strong>Shooting :</strong> {$ticketDetails['shooting']} (Coût additionnel: 1000F)</li>
+                                    <li><strong>Coût total :</strong> {$cost}F</li>
+                                </ul>
+                                <p>Merci et à bientôt !</p>";
             $mail->AltBody = 'Merci pour votre achat !';
 
             $mail->send();

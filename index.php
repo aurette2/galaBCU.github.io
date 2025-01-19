@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - <?= SITE_NAME ?></title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         /* Style général */
         body {
@@ -308,6 +309,30 @@
     <!-- <p class="text-center">Nous organisons un événement spécial pour célébrer la Saint-Valentin. <br>Venez profiter d'une soirée inoubliable avec des activités, des spectacles et bien plus encore !</p> -->
 </div>
 
+<!-- Social Media Section -->
+<div id="contact" class="container mt-5">
+    <h2 class="text-center mb-4">Suivez-nous sur nos réseaux sociaux</h2>
+    <div class="row text-center">
+        <div class="col-4">
+            <a href="https://www.facebook.com/" target="_blank" class="text-decoration-none">
+                <i class="fab fa-facebook-square fa-3x" style="color: #1877f2;"></i>
+                <p style="color: #fff;">Facebook</p>
+            </a>
+        </div>
+        <div class="col-4">
+            <a href="https://www.tiktok.com/@eventjoy.gala" target="_blank" class="text-decoration-none">
+                <i class="fab fa-tiktok fa-3x" style="color: #000;"></i>
+                <p style="color: #fff;" >TikTok</p>
+            </a>
+        </div>
+        <div class="col-4">
+            <a href="mailto:eventjoy.gala@gmail.com" target="_blank" class="text-decoration-none">
+                <i class="fas fa-envelope fa-3x" style="color: #FFD700;"></i>
+                <p style="color: #fff;" >Email</p>
+            </a>
+        </div>
+    </div>
+</div>
 
 <br><br>
 
