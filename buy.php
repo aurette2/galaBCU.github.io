@@ -1,137 +1,83 @@
 <?php 
 include 'db.php';
 include 'config.php';
-require 'vendor/autoload.php'; // Include libraries for QR code and email handling
+require 'vendor/autoload.php'; // Charge les bibliothèques nécessaires
 
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/SMTP.php';
-
-
+// Chargement des dépendances pour PHPMailer et QR Code
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use FedaPay\FedaPay; // SDK FedaPay
+
+// Configurer FedaPay (clés API et environnement)
+FedaPay::setApiKey('sk_sandbox_QDfXHkIXyeWEfyC94SSW8tOG'); // Remplacez par votre clé API privée FedaPay
+FedaPay::setEnvironment('sandbox'); // Changez pour 'live' en production
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $prenom = $_POST['prenom'];
-    $email = $_POST['email'];
-    $telephone = $_POST['telephone'];
-    $type = $_POST['type']; // Solo or Couple
-    $preference_vin = $_POST['preference_vin'];
-    $shooting = $_POST['shooting']; // Yes or No
+    // Validation et récupération des données utilisateur
+    $name = htmlspecialchars($_POST['name']);
+    $prenom = htmlspecialchars($_POST['prenom']);
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    $telephone = htmlspecialchars($_POST['telephone']);
+    $type = htmlspecialchars($_POST['type']);
+    $preference_vin = htmlspecialchars($_POST['preference_vin']);
+    $shooting = htmlspecialchars($_POST['shooting']);
 
-    // Base cost calculation
+    // Vérification des données requises
+    if (!$name || !$prenom || !$email || !$telephone || !$type || !$preference_vin || !$shooting) {
+        die('Veuillez remplir tous les champs correctement.');
+    }
+
+    // Calcul du coût
     $cost = 0;
     if ($type === 'Solo') {
-        $cost += 20000; // Add 20,000 for Solo ticket
+        $cost += 20000; // Ticket solo : 20 000F
     } elseif ($type === 'Couple') {
-        $cost += 30000; // Add 30,000 for Couple ticket
+        $cost += 30000; // Ticket couple : 30 000F
     }
-
-    // Add additional cost for shooting
     if ($shooting === 'yes') {
-        $cost += 1000; // Add 1,000 for the shooting option
+        $cost += 1000; // Option shooting : +1 000F
     }
 
-    // Save the ticket details into the database
-    $stmt = $pdo->prepare("INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
-    $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting]);
+    try {
+        // Créer une transaction avec FedaPay
+        $transaction = \FedaPay\Transaction::create([
+            'description' => 'Paiement Ticket Gala Février 2025',
+            'amount' => $cost,
+            'currency' => ['iso' => 'XOF'], // Devise utilisée
+            'callback_url' => 'https://votre-site.com/confirm.php', // URL de confirmation après paiement
+            'customer' => [
+                'firstname' => $name,
+                'lastname' => $prenom,
+                'email' => $email,
+                'phone_number' => [
+                    'number' => $telephone,
+                    'country' => 'BJ' // Code pays
+                ]
+            ]
+        ]);
 
-    // Retrieve the inserted ticket ID
-    $ticketId = $pdo->lastInsertId();
+        // URL de paiement FedaPay
+        $paymentUrl = $transaction->generateToken()->url;
 
-    // Fetch the ticket details
-    $ticket = $pdo->prepare("SELECT * FROM tickets WHERE id = ?");
-    $ticket->execute([$ticketId]);
-    $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
+        // Enregistrer les détails dans la base de données
+        $stmt = $pdo->prepare("
+            INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, cost, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+        ");
+        $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting, $cost]);
 
-    
-
-
-    // if ($ticketDetails && $ticketDetails['status'] === 'confirmed') {
-        // Générer le QR code
-        $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
-                    "Name: {$ticketDetails['name']} {$ticketDetails['prenom']}\n" .
-                    "Email: {$ticketDetails['email']}\n" .
-                    "Telephone: {$ticketDetails['telephone']}\n" .
-                    "Type: {$ticketDetails['type']}\n" .
-                    "Préférence en vin: {$ticketDetails['preference_vin']}\n" .
-                    "Shooting: {$ticketDetails['shooting']} (Coût additionnel: 1000F)\n" .
-                    "Total Cost: {$cost}F\n" .
-                    "Status: {$ticketDetails['status']}\n" .
-                    "Created At: {$ticketDetails['created_at']}";
-
-        
-
-        $qrCode = new QrCode($qrData);
-        // $qrCode->setSize(300);
-        $writer = new PngWriter();
-        $qrFile = "qrcodes/ticket_{$ticketDetails['name']}.png";
-        $writer->write($qrCode)->saveToFile($qrFile);
-        echo "<pre>";
-        print_r($ticketDetails);
-        echo "</pre>";
-
-        // Envoyer un email avec le QR code
-        $mail = new PHPMailer(true);
-        
-        try {
-            // Configuration SMTP
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Remplacez par votre hôte SMTP
-            $mail->SMTPAuth = true;
-            $mail->Username = 'eventjoy.gala@gmail.com'; // Votre email SMTP
-            $mail->Password = 'EventJoyGala2024'; // Mot de passe SMTP
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587; // TLS port
-            
-            
-
-            // Destinataire
-            $mail->setFrom('eventjoy.gala@gmail.com', 'Gala Organisateur');
-            $mail->addAddress($ticketDetails['email'], "{$ticketDetails['name']} {$ticketDetails['prenom']}");
-
-            // Pièce jointe : QR code
-            $mail->addAttachment($qrFile,"Code QR de l'evenement");
-            // $mail->addAttachment('path/to/event_details.pdf', "Ticket de l'evenement"); // Another example file
-
-
-            // Contenu de l'email
-            $mail->isHTML(true);
-            $mail->Subject = 'Confirmation de votre achat de ticket';
-            $mail->Body    = "<h1>Merci pour votre achat !</h1><p>Voici votre ticket pour le Gala.</p> <p><strong>Détails du ticket :</strong></p>
-                                <ul>
-                                    <li><strong>Nom et prenoms:</strong> {$ticketDetails['name']} {$ticketDetails['prenom']}</li>
-                                    <li><strong>Email :</strong> {$ticketDetails['email']}</li>
-                                    <li><strong>Téléphone :</strong> {$ticketDetails['telephone']}</li>
-                                    <li><strong>Type de ticket :</strong> {$ticketDetails['type']}</li>
-                                    <li><strong>Préférence en vin :</strong> {$ticketDetails['preference_vin']}</li>
-                                    <li><strong>Shooting :</strong> {$ticketDetails['shooting']} (Coût additionnel: 1000F)</li>
-                                    <li><strong>Coût total :</strong> {$cost}F</li>
-                                </ul>
-                                <p>Merci et à bientôt !</p>";
-            $mail->AltBody = 'Merci pour votre achat !';
-
-            $mail->send();
-        } catch (Exception $e) {
-            echo "Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}";
-        }
-
-        // Rediriger vers la page de confirmation avec le chemin du QR code
-        header("Location: confirm.php?qrFile=" . urlencode($qrFile));
+        // Redirection vers l'URL de paiement FedaPay
+        header("Location: {$paymentUrl}");
         exit;
-    // } else {
-    //     // Si le statut n'est pas confirmé, afficher un message ou rediriger
-    //     echo "Le statut du ticket est toujours en attente. Veuillez réessayer.";
-    //     exit;
-    // }
-
-        
-
+    } catch (Exception $e) {
+        // Gestion des erreurs
+        die('Erreur lors de la création du paiement : ' . $e->getMessage());
+    }
 }
 ?>
+
 
 
 <!DOCTYPE html>
