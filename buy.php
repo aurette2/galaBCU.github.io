@@ -1,83 +1,78 @@
-<?php 
+<?php
 include 'db.php';
-include 'config.php';
-require 'vendor/autoload.php'; // Charge les bibliothèques nécessaires
+require 'vendor/autoload.php';
+require 'config.php';
 
-// Chargement des dépendances pour PHPMailer et QR Code
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use FedaPay\FedaPay; // SDK FedaPay
 
-// Configurer FedaPay (clés API et environnement)
-FedaPay::setApiKey('sk_sandbox_QDfXHkIXyeWEfyC94SSW8tOG'); // Remplacez par votre clé API privée FedaPay
-FedaPay::setEnvironment('sandbox'); // Changez pour 'live' en production
-
+// Vérification de la méthode POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validation et récupération des données utilisateur
-    $name = htmlspecialchars($_POST['name']);
-    $prenom = htmlspecialchars($_POST['prenom']);
-    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-    $telephone = htmlspecialchars($_POST['telephone']);
-    $type = htmlspecialchars($_POST['type']);
-    $preference_vin = htmlspecialchars($_POST['preference_vin']);
-    $shooting = htmlspecialchars($_POST['shooting']);
+    // Récupération et validation des données
+    $name = isset($_POST['name']) ? htmlspecialchars($_POST['name']) : null;
+    $prenom = isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : null;
+    $email = isset($_POST['email']) ? filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) : null;
+    $telephone = isset($_POST['telephone']) ? htmlspecialchars($_POST['telephone']) : null;
+    $type = isset($_POST['type']) ? htmlspecialchars($_POST['type']) : null;
+    $preference_vin = isset($_POST['preference_vin']) ? htmlspecialchars($_POST['preference_vin']) : null;
+    $shooting = isset($_POST['shooting']) ? htmlspecialchars($_POST['shooting']) : null;
 
-    // Vérification des données requises
     if (!$name || !$prenom || !$email || !$telephone || !$type || !$preference_vin || !$shooting) {
         die('Veuillez remplir tous les champs correctement.');
     }
 
     // Calcul du coût
-    $cost = 0;
-    if ($type === 'Solo') {
-        $cost += 20000; // Ticket solo : 20 000F
-    } elseif ($type === 'Couple') {
-        $cost += 30000; // Ticket couple : 30 000F
+    $cost = $type === 'Solo' ? 20000 : 30000;
+    $cost += $shooting === 'yes' ? 1000 : 0;
+
+    // Insertion dans la base de données
+    $stmt = $pdo->prepare("INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
+    $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting]);
+
+    $ticketId = $pdo->lastInsertId();
+
+    // Génération du QR code
+    $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
+    $qrCode = new QrCode($qrData);
+    $writer = new PngWriter();
+    $qrDir = 'qrcodes/';
+    if (!is_dir($qrDir)) {
+        mkdir($qrDir, 0777, true);
     }
-    if ($shooting === 'yes') {
-        $cost += 1000; // Option shooting : +1 000F
-    }
+    $qrFile = "{$qrDir}ticket_{$name}.png";
+    $writer->write($qrCode)->saveToFile($qrFile);
 
-    try {
-        // Créer une transaction avec FedaPay
-        $transaction = \FedaPay\Transaction::create([
-            'description' => 'Paiement Ticket Gala Février 2025',
-            'amount' => $cost,
-            'currency' => ['iso' => 'XOF'], // Devise utilisée
-            'callback_url' => 'https://votre-site.com/confirm.php', // URL de confirmation après paiement
-            'customer' => [
-                'firstname' => $name,
-                'lastname' => $prenom,
-                'email' => $email,
-                'phone_number' => [
-                    'number' => $telephone,
-                    'country' => 'BJ' // Code pays
-                ]
-            ]
-        ]);
+    // Envoi de l'email
+    // $mail = new PHPMailer(true);
+    // try {
+    //     $mail->isSMTP();
+    //     $mail->Host = 'smtp.gmail.com';
+    //     $mail->SMTPAuth = true;
+    //     $mail->Username = 'votre_email@gmail.com';
+    //     $mail->Password = 'votre_mot_de_passe';
+    //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    //     $mail->Port = 587;
 
-        // URL de paiement FedaPay
-        $paymentUrl = $transaction->generateToken()->url;
+    //     $mail->setFrom('votre_email@gmail.com', 'Gala Organisateur');
+    //     $mail->addAddress($email, "$name $prenom");
+    //     $mail->addAttachment($qrFile);
 
-        // Enregistrer les détails dans la base de données
-        $stmt = $pdo->prepare("
-            INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, cost, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-        ");
-        $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting, $cost]);
+    //     $mail->isHTML(true);
+    //     $mail->Subject = 'Confirmation de votre achat';
+    //     $mail->Body = "<h1>Merci $name !</h1><p>Voici votre ticket pour le Gala.</p>";
 
-        // Redirection vers l'URL de paiement FedaPay
-        header("Location: {$paymentUrl}");
-        exit;
-    } catch (Exception $e) {
-        // Gestion des erreurs
-        die('Erreur lors de la création du paiement : ' . $e->getMessage());
-    }
+    //     $mail->send();
+    // } catch (Exception $e) {
+    //     die("Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}");
+    // }
+
+    header("Location: confirm.php?qrFile=" . urlencode($qrFile));
+    exit;
+
 }
 ?>
-
 
 
 <!DOCTYPE html>
