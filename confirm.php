@@ -1,6 +1,32 @@
 <?php
 // Get the QR code file path from the URL
 $qrFile = isset($_GET['qrFile']) ? $_GET['qrFile'] : null;
+
+require 'vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+// Envoi de l'email avec le QR code
+$mail = new PHPMailer(true);
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'eventjoy.gala@gmail.com'; // Votre email SMTP
+    $mail->Password = 'yzheimqshukuqdqj'; // Mot de passe SMTP
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+
+    $mail->setFrom('eventjoy.gala@gmail.com', 'Gala BCU Organisateur');
+    $mail->addAddress($email, "$name $prenom");
+    $mail->addAttachment($qrFile);
+
+    $mail->isHTML(true);
+    $mail->Subject = 'Confirmation de votre achat';
+    $mail->Body = "<h1>Merci $name !</h1><p>Voici votre ticket $ticketId pour le Gala.</p>";
+    $mail->send();
+} catch (Exception $e) {
+    die("Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}");
+}
 ?>
 
 <!DOCTYPE html>

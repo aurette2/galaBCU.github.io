@@ -3,10 +3,17 @@ include 'db.php';
 require 'vendor/autoload.php';
 require 'config.php';
 
+// Chargement des dépendances pour PHPMailer et QR Code
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+// use FedaPay\FedaPay; // SDK FedaPay
+
+// // Configurer FedaPay (clés API et environnement)
+// FedaPay::setApiKey('sk_sandbox_QDfXHkIXyeWEfyC94SSW8tOG'); // Remplacez par votre clé API privée FedaPay
+// FedaPay::setEnvironment('sandbox'); // Changez pour 'live' en production
+
 
 // Vérification de la méthode POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -28,8 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cost += $shooting === 'yes' ? 1000 : 0;
 
     // Insertion dans la base de données
-    $stmt = $pdo->prepare("INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
-    $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting]);
+    $stmt = $pdo->prepare("
+            INSERT INTO tickets (name, prenom, email, telephone, type, preference_vin, shooting, cost, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+        ");
+        $stmt->execute([$name, $prenom, $email, $telephone, $type, $preference_vin, $shooting, $cost]);
+
 
     $ticketId = $pdo->lastInsertId();
 
@@ -44,33 +55,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $qrFile = "{$qrDir}ticket_{$name}.png";
     $writer->write($qrCode)->saveToFile($qrFile);
 
-    // Envoi de l'email
-    // $mail = new PHPMailer(true);
     // try {
-    //     $mail->isSMTP();
-    //     $mail->Host = 'smtp.gmail.com';
-    //     $mail->SMTPAuth = true;
-    //     $mail->Username = 'votre_email@gmail.com';
-    //     $mail->Password = 'votre_mot_de_passe';
-    //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    //     $mail->Port = 587;
+    //     // Créer une transaction avec FedaPay
+    //     $transaction = \FedaPay\Transaction::create([
+    //         'description' => 'Paiement Ticket Gala Février 2025',
+    //         'amount' => $cost,
+    //         'currency' => ['iso' => 'XOF'], // Devise utilisée
+    //         'callback_url' => 'http://localhost:8080/gala_fev2025/confirm.php?qrFile='. urlencode($qrFile), // URL de confirmation après paiement
+    //         'customer' => [
+    //             'firstname' => $name,
+    //             'lastname' => $prenom,
+    //             'email' => $email,
+    //             'phone_number' => [
+    //                 'number' => $telephone,
+    //                 'country' => 'BJ' // Code pays
+    //             ]
+    //         ]
+    //     ]);
 
-    //     $mail->setFrom('votre_email@gmail.com', 'Gala Organisateur');
-    //     $mail->addAddress($email, "$name $prenom");
-    //     $mail->addAttachment($qrFile);
+    //     // URL de paiement FedaPay
+    //     $paymentUrl = $transaction->generateToken()->url;
+    //     // Redirection vers la page de paiement
+    //     header('Location: ' . $paymentUrl);
+    //     exit;
 
-    //     $mail->isHTML(true);
-    //     $mail->Subject = 'Confirmation de votre achat';
-    //     $mail->Body = "<h1>Merci $name !</h1><p>Voici votre ticket pour le Gala.</p>";
-
-    //     $mail->send();
-    // } catch (Exception $e) {
-    //     die("Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}");
+    // } catch (\Exception $e) {
+    //     die('Une erreur est survenue lors du paiement : ' . $e->getMessage());
     // }
-
-    header("Location: confirm.php?qrFile=" . urlencode($qrFile));
+    // Redirection pour le paiement avec Kkiapay
+    echo "
+        <script>
+            kkiapayWidget({
+                amount: $cost,
+                key: '134763e0d76111ef9e73d9bd36745045', // Votre clé API publique
+                sandbox: true, // Mode sandbox
+                callback: 'http://localhost:8080/gala_fev2025/confirm.php?ticketId=$ticketId&qrFile=" . urlencode($qrFile) . "'
+            });
+        </script>
+    ";
     exit;
-
 }
 ?>
 
@@ -260,6 +283,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </footer>
 
     <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.kkiapay.me/k.js"></script>
+    <!-- <script amount="<montant-a-prelever-chez-le-client>" 
+        callback=""
+        data=""
+        position="right" 
+        theme="#0095ff"
+        sandbox="true"
+        key="<votre-api-key>"
+        src="https://cdn.kkiapay.me/k.js"></script> -->
 </body>
 
 </html>
