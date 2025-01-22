@@ -1,41 +1,65 @@
 <?php
 
-if (isset($_GET['ticketId']) && isset($_GET['qrFile'])) {
-    $ticketId = $_GET['ticketId'];
-    $qrFile = $_GET['qrFile'];
-    // Traitement ici
-} else {
-    echo "Paramètres manquants!";
-}
-
-
+// Chargement des fichiers requis
 require 'vendor/autoload.php';
 require 'config.php';
+
+// Importation des classes nécessaires de PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-// Envoi de l'email avec le QR code
-$mail = new PHPMailer(true);
-try {
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'eventjoy.gala@gmail.com'; // Votre email SMTP
-    $mail->Password = 'yzheimqshukuqdqj'; // Mot de passe SMTP
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
 
-    $mail->setFrom('eventjoy.gala@gmail.com', 'Gala BCU Organisateur');
-    $mail->addAddress($email, "$name $prenom");
-    $mail->addAttachment($qrFile);
+// Récupération des données via $_GET et validation
+$qrFile = isset($_GET['qrFile']) ? $_GET['qrFile'] : null;
+$ticketDetails = isset($_GET['ticketDetails']) ? $_GET['ticketDetails'] : null;
 
-    $mail->isHTML(true);
-    $mail->Subject = 'Confirmation de votre achat';
-    $mail->Body = "<h1>Merci $name !</h1><p>Voici votre ticket $ticketId pour le Gala.</p>";
-    $mail->send();
-} catch (Exception $e) {
-    die("Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}");
+// Vérifiez que les détails du ticket et le fichier QR sont présents
+if ($ticketDetails && is_array($ticketDetails)) {
+    // Extraction des données du ticket
+    $ticketId = $ticketDetails['id'] ?? null;
+    $name = $ticketDetails['name'] ?? null;
+    $prenom = $ticketDetails['prenom'] ?? null;
+    $email = $ticketDetails['email'] ?? null;
+
+    // Validation des champs nécessaires
+    if (!$qrFile || !$email || !$name || !$prenom || !$ticketId) {
+        die("Erreur : Paramètres manquants ou invalides.");
+    }
+
+    // Envoi de l'email avec PHPMailer
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'eventjoy.gala@gmail.com'; // Votre email SMTP
+        $mail->Password = 'yzheimqshukuqdqj'; // Mot de passe SMTP
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        $mail->setFrom('eventjoy.gala@gmail.com', 'Gala BCU Organisateur');
+        $mail->addAddress($email, "$name $prenom");
+
+        // Ajout du fichier QR en pièce jointe
+        if (file_exists($qrFile)) {
+            $mail->addAttachment($qrFile);
+        } else {
+            die("Erreur : Le fichier QR code est introuvable.");
+        }
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Confirmation de votre achat';
+        $mail->Body = "<h1>Merci $name !</h1><p>Voici votre ticket (ID : $ticketId) pour le Gala.</p>";
+
+        $mail->send();
+        echo "Email envoyé avec succès à $email.";
+    } catch (Exception $e) {
+        die("Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}");
+    }
+} else {
+    die("Erreur : Paramètres du ticket manquants ou invalides.");
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

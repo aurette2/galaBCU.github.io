@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         openKkiapayWidget({
             amount: <?= isset($cost) ? $cost : 0 ?>,
             position: "center",
-            callback: `http://localhost:8080/gala_fev2025/confirm.php?ticketId=<?= isset($ticketId) ? $ticketId : 0 ?>&qrFile=<?= isset($qrFile) ? urlencode($qrFile) : '' ?>`,
+            callback: `http://localhost:8000/gala_fev2025/confirm.php?ticketId=<?= isset($ticketId) ? $ticketId : 0 ?>&qrFile=<?= isset($qrFile) ? urlencode($qrFile) : '' ?>`,
             name: 'Gala Event',
             reason: 'Achat de tickets',
             theme: "green",
