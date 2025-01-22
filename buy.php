@@ -44,8 +44,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $ticketId = $pdo->lastInsertId();
 
+    // Fetch the ticket details
+    $ticket = $pdo->prepare("SELECT * FROM tickets WHERE id = ?");
+    $ticket->execute([$ticketId]);
+    $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
+
     // Génération du QR code
-    $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
+    // $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
+    $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
+                    "Name: {$ticketDetails['name']} {$ticketDetails['prenom']}\n" .
+                    "Email: {$ticketDetails['email']}\n" .
+                    "Telephone: {$ticketDetails['telephone']}\n" .
+                    "Type: {$ticketDetails['type']}\n" .
+                    "Préférence en vin: {$ticketDetails['preference_vin']}\n" .
+                    "Shooting: {$ticketDetails['shooting']} (Coût additionnel: 1000F)\n" .
+                    "Total Cost: {$cost}F\n" .
+                    "Status: {$ticketDetails['status']}\n" .
+                    "Created At: {$ticketDetails['created_at']}";
+
     $qrCode = new QrCode($qrData);
     $writer = new PngWriter();
     $qrDir = 'qrcodes/';
@@ -82,16 +98,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // } catch (\Exception $e) {
     //     die('Une erreur est survenue lors du paiement : ' . $e->getMessage());
     // }
-    // Redirection pour le paiement avec Kkiapay
+    
+    // Script de redirection pour le paiement avec Kkiapay
     echo "
         <script>
-            kkiapayWidget({
-                amount: $cost,
-                key: '134763e0d76111ef9e73d9bd36745045', // Votre clé API publique
-                callback: 'http://localhost:8080/gala_fev2025/confirm.php?ticketId=$ticketId&qrFile=" . urlencode($qrFile) . "',
-                sandbox: true, // Mode sandbox
-                position='right', 
-                theme='#0095ff'
+            document.addEventListener('DOMContentLoaded', function () {
+                openKkiapayWidget({
+                    amount: $cost,
+                    key: '134763e0d76111ef9e73d9bd36745045',
+                    callback: 'http://localhost:8080/gala_fev2025/confirm.php?ticketId=$ticketId&qrFile=" . urlencode($qrFile) . "',
+                    sandbox: true,
+                    position: 'center',
+                    theme: '#0095ff'
+                });
             });
         </script>
     ";
@@ -191,6 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             z-index: 1;
         }
     </style>
+    <script src="https://cdn.kkiapay.me/k.js"></script>
 </head>
 
 <body>
@@ -285,7 +305,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </footer>
 
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.kkiapay.me/k.js"></script>
     <!-- <script amount="<montant-a-prelever-chez-le-client>" 
         callback=""
         data=""
