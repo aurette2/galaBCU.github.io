@@ -88,8 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             kkiapayWidget({
                 amount: $cost,
                 key: '134763e0d76111ef9e73d9bd36745045', // Votre clé API publique
+                callback: 'http://localhost:8080/gala_fev2025/confirm.php?ticketId=$ticketId&qrFile=" . urlencode($qrFile) . "',
                 sandbox: true, // Mode sandbox
-                callback: 'http://localhost:8080/gala_fev2025/confirm.php?ticketId=$ticketId&qrFile=" . urlencode($qrFile) . "'
+                position='right', 
+                theme='#0095ff'
             });
         </script>
     ";
