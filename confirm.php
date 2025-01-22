@@ -1,8 +1,16 @@
 <?php
-// Get the QR code file path from the URL
-$qrFile = isset($_GET['qrFile']) ? $_GET['qrFile'] : null;
+
+if (isset($_GET['ticketId']) && isset($_GET['qrFile'])) {
+    $ticketId = $_GET['ticketId'];
+    $qrFile = $_GET['qrFile'];
+    // Traitement ici
+} else {
+    echo "Paramètres manquants!";
+}
+
 
 require 'vendor/autoload.php';
+require 'config.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 // Envoi de l'email avec le QR code

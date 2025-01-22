@@ -10,10 +10,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 // use FedaPay\FedaPay; // SDK FedaPay
 
-// // Configurer FedaPay (clés API et environnement)
-// FedaPay::setApiKey('sk_sandbox_QDfXHkIXyeWEfyC94SSW8tOG'); // Remplacez par votre clé API privée FedaPay
-// FedaPay::setEnvironment('sandbox'); // Changez pour 'live' en production
-
 
 // Vérification de la méthode POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket->execute([$ticketId]);
     $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
 
+
     // Génération du QR code
     // $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
     $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
@@ -61,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "Total Cost: {$cost}F\n" .
                     "Status: {$ticketDetails['status']}\n" .
                     "Created At: {$ticketDetails['created_at']}";
-
+        
     $qrCode = new QrCode($qrData);
     $writer = new PngWriter();
     $qrDir = 'qrcodes/';
@@ -71,50 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $qrFile = "{$qrDir}ticket_{$name}.png";
     $writer->write($qrCode)->saveToFile($qrFile);
 
-    // try {
-    //     // Créer une transaction avec FedaPay
-    //     $transaction = \FedaPay\Transaction::create([
-    //         'description' => 'Paiement Ticket Gala Février 2025',
-    //         'amount' => $cost,
-    //         'currency' => ['iso' => 'XOF'], // Devise utilisée
-    //         'callback_url' => 'http://localhost:8080/gala_fev2025/confirm.php?qrFile='. urlencode($qrFile), // URL de confirmation après paiement
-    //         'customer' => [
-    //             'firstname' => $name,
-    //             'lastname' => $prenom,
-    //             'email' => $email,
-    //             'phone_number' => [
-    //                 'number' => $telephone,
-    //                 'country' => 'BJ' // Code pays
-    //             ]
-    //         ]
-    //     ]);
-
-    //     // URL de paiement FedaPay
-    //     $paymentUrl = $transaction->generateToken()->url;
-    //     // Redirection vers la page de paiement
-    //     header('Location: ' . $paymentUrl);
-    //     exit;
-
-    // } catch (\Exception $e) {
-    //     die('Une erreur est survenue lors du paiement : ' . $e->getMessage());
-    // }
-    
-    // Script de redirection pour le paiement avec Kkiapay
-    echo "
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                openKkiapayWidget({
-                    amount: $cost,
-                    key: '134763e0d76111ef9e73d9bd36745045',
-                    callback: 'http://localhost:8080/gala_fev2025/confirm.php?ticketId=$ticketId&qrFile=" . urlencode($qrFile) . "',
-                    sandbox: true,
-                    position: 'center',
-                    theme: '#0095ff'
-                });
-            });
-        </script>
-    ";
-    exit;
 }
 ?>
 
@@ -210,9 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             z-index: 1;
         }
     </style>
-    <script src="https://cdn.kkiapay.me/k.js"></script>
+<script src="https://cdn.kkiapay.me/k.js"></script>
 </head>
-
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -293,9 +245,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                 </div>
 
+                
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary w-100">Valider</button>
-                </div>
+    <button id="payNow" type="button" class="alert alert-success">PAYER MAINTENANT</button>
+</div>
+
+<script>
+    document.getElementById("payNow").addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // Validation des champs
+        const name = document.getElementById("name").value.trim();
+        const prenom = document.getElementById("prenom").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const telephone = document.getElementById("telephone").value.trim();
+
+        if (!name || !prenom || !email || !telephone) {
+            alert("Veuillez remplir tous les champs !");
+            return;
+        }
+
+        // Appel du widget Kkiapay
+        openKkiapayWidget({
+            amount: <?= isset($cost) ? $cost : 0 ?>,
+            position: "center",
+            callback: `http://localhost:8080/gala_fev2025/confirm.php?ticketId=<?= isset($ticketId) ? $ticketId : 0 ?>&qrFile=<?= isset($qrFile) ? urlencode($qrFile) : '' ?>`,
+            name: 'Gala Event',
+            reason: 'Achat de tickets',
+            theme: "green",
+            key: "039854d0d8c011ef815869eb5750a6f1",
+            sandbox:"true"
+        });
+    });
+</script>
+
 </form>
     </div>
 
@@ -305,14 +288,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </footer>
 
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <!-- <script amount="<montant-a-prelever-chez-le-client>" 
-        callback=""
-        data=""
-        position="right" 
-        theme="#0095ff"
-        sandbox="true"
-        key="<votre-api-key>"
-        src="https://cdn.kkiapay.me/k.js"></script> -->
 </body>
 
 </html>
