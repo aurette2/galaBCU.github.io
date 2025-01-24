@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket = $pdo->prepare("SELECT * FROM tickets WHERE id = ?");
     $ticket->execute([$ticketId]);
     $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
-    echo''.$ticketDetails['name'].'';
+    // echo''.$ticketDetails['name'].'';
     // Génération du QR code
     // $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
     $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
