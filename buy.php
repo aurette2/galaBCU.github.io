@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $writer->write($qrCode)->saveToFile($qrFile);
 
     // Encodage des détails du ticket en JSON avant redirection
-    // $ticketDetailsJson = json_encode($ticketDetails);
-    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetails)."");
+    $ticketDetailsJson = json_encode($ticketDetails);
+    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetailsJson)."");
     exit();
 
 }

@@ -3,11 +3,10 @@ require 'config.php';
 
 // Récupération des données envoyées via l'URL
 if (isset($_GET['ticketDetails'])) {
-    $ticketDetails = $_GET['ticketDetails'];
-    // json_decode($_GET['ticketDetails'], true);
-    // if (json_last_error() !== JSON_ERROR_NONE || !is_array($ticketDetails)) {
-    //     die('Les données du ticket sont corrompues ou invalides.');
-    // }
+    $ticketDetails = json_decode($_GET['ticketDetails'], true);
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($ticketDetails)) {
+        die('Les données du ticket sont corrompues ou invalides.');
+    }
 } else {
     die('Le paramètre ticketDetails est manquant.');
 }
