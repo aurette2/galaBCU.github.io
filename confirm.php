@@ -1,62 +1,121 @@
 <?php
+include 'db.php'; // Connexion à la base de données
+require 'vendor/autoload.php'; // Chargement des bibliothèques nécessaires
 
-// Chargement des fichiers requis
-require 'vendor/autoload.php';
-require 'config.php';
+// Vérification si les paramètres nécessaires sont présents dans l'URL
+if (!isset($_GET['transaction_id']) || !isset($_GET['name']) || !isset($_GET['prenom']) || !isset($_GET['email']) || !isset($_GET['cost'])) {
+    die('Paramètres manquants dans la requête.');
+}
 
-// Importation des classes nécessaires de PHPMailer
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// Récupération et sécurisation des données GET
+$transactionId = htmlspecialchars($_GET['transaction_id']);
+$name = htmlspecialchars($_GET['name']);
+$prenom = htmlspecialchars($_GET['prenom']);
+$email = htmlspecialchars($_GET['email']);
+$cost = (int) $_GET['cost'];
 
-// Récupération des données via $_GET et validation
-$qrFile = isset($_GET['qrFile']) ? $_GET['qrFile'] : null;
-$ticketDetails = isset($_GET['ticketDetails']) ? $_GET['ticketDetails'] : null;
+// Vérification de la transaction via Kkiapay API
+$curl = curl_init();
+curl_setopt_array($curl, [
+    CURLOPT_URL => "https://api.kkiapay.me/api/v1/transactions/status?transactionId=$transactionId",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        "Authorization: Bearer 134763e0d76111ef9e73d9bd36745045", // Clé d'authentification
+        "Content-Type: application/json"
+    ]
+]);
 
-// Vérifiez que les détails du ticket et le fichier QR sont présents
-if ($ticketDetails && is_array($ticketDetails)) {
-    // Extraction des données du ticket
-    $ticketId = $ticketDetails['id'] ?? null;
-    $name = $ticketDetails['name'] ?? null;
-    $prenom = $ticketDetails['prenom'] ?? null;
-    $email = $ticketDetails['email'] ?? null;
+$response = curl_exec($curl);
+curl_close($curl);
 
-    // Validation des champs nécessaires
-    if (!$qrFile || !$email || !$name || !$prenom || !$ticketId) {
-        die("Erreur : Paramètres manquants ou invalides.");
-    }
+$data = json_decode($response, true);
 
-    // Envoi de l'email avec PHPMailer
-    $mail = new PHPMailer(true);
+// Génération du chemin du QR code
+$qrFile = "qrcodes/$transactionId.png";
+if (!file_exists($qrFile)) {
+    $qrFile = null; // Si le fichier n'existe pas, définir comme null
+}
+
+// Vérification si la transaction est valide
+if ($data && isset($data['status']) && $data['status'] === 'SUCCESS') {
+    // Mise à jour du statut dans la base de données
+    $stmt = $pdo->prepare("UPDATE tickets SET status = 'paid', transaction_id = ? WHERE email = ? AND cost = ?");
+    $stmt->execute([$transactionId, $email, $cost]);
+
+    // Envoi d'un email avec le ticket
     try {
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'eventjoy.gala@gmail.com'; // Votre email SMTP
-        $mail->Password = 'yzheimqshukuqdqj'; // Mot de passe SMTP
+        $mail->Username = 'eventjoy.gala@gmail.com';
+        $mail->Password = 'yzheimqshukuqdqj'; // Remplacez par votre mot de passe
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
         $mail->setFrom('eventjoy.gala@gmail.com', 'Gala BCU Organisateur');
         $mail->addAddress($email, "$name $prenom");
 
-        // Ajout du fichier QR en pièce jointe
-        if (file_exists($qrFile)) {
+        // Ajout d'un contenu personnalisé
+        $mail->isHTML(true);
+        $mail->Subject = "Confirmation de votre paiement pour le Gala BCU";
+        $mail->Body = "
+            <h1>Bonjour $name $prenom,</h1>
+            <p>Merci pour votre achat ! Voici les détails de votre ticket :</p>
+            <ul>
+                <li><strong>Transaction ID :</strong> $transactionId</li>
+                <li><strong>Montant :</strong> $cost F CFA</li>
+            </ul>
+            <p>Nous avons hâte de vous accueillir au Gala. À bientôt !</p>
+        ";
+
+        // Ajout du QR code en pièce jointe, si disponible
+        if ($qrFile && file_exists($qrFile)) {
             $mail->addAttachment($qrFile);
-        } else {
-            die("Erreur : Le fichier QR code est introuvable.");
         }
 
-        $mail->isHTML(true);
-        $mail->Subject = 'Confirmation de votre achat';
-        $mail->Body = "<h1>Merci $name !</h1><p>Voici votre ticket (ID : $ticketId) pour le Gala.</p>";
-
         $mail->send();
-        echo "Email envoyé avec succès à $email.";
     } catch (Exception $e) {
-        die("Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}");
+        echo "Erreur lors de l'envoi de l'email : {$mail->ErrorInfo}";
     }
+
+    // Confirmation visuelle
+    echo "<html>
+    <head>
+        <title>Confirmation de Paiement</title>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+    </head>
+    <body class='bg-light'>
+        <div class='container mt-5'>
+            <div class='card shadow p-4'>
+                <h1 class='text-success'>Paiement réussi !</h1>
+                <p>Merci, <strong>$name $prenom</strong>. Votre paiement de <strong>$cost F CFA</strong> a été confirmé avec succès.</p>
+                <p>Un email contenant votre ticket vous a été envoyé à <strong>$email</strong>.</p>
+                <hr>
+                <a href='index.php' class='btn btn-primary'>Retour à la page d'accueil</a>
+            </div>
+        </div>
+    </body>
+    </html>";
 } else {
-    die("Erreur : Paramètres du ticket manquants ou invalides.");
+    // Si la transaction a échoué
+    echo "<html>
+    <head>
+        <title>Échec du Paiement</title>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+    </head>
+    <body class='bg-light'>
+        <div class='container mt-5'>
+            <div class='card shadow p-4'>
+                <h1 class='text-danger'>Paiement échoué</h1>
+                <p>Une erreur est survenue lors de la validation de votre paiement.</p>
+                <p>Veuillez réessayer ou contacter notre support pour assistance.</p>
+                <a href='index.php' class='btn btn-primary'>Retour à la page d'accueil</a>
+            </div>
+        </div>
+    </body>
+    </html>";;
+    // var_dump($response);
 }
 ?>
 

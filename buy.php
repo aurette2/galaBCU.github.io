@@ -27,8 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Calcul du coût
-    $cost = $type === 'Solo' ? 20000 : 30000;
-    $cost += $shooting === 'yes' ? 1000 : 0;
+        $cost = 0;
+    if ($type === 'Solo') {
+        $cost += 20000;
+    } elseif ($type === 'Couple') {
+        $cost += 30000;
+    }
+    if ($shooting === 'yes') {
+        $cost += 1000;
+    }
 
     // Insertion dans la base de données
     $stmt = $pdo->prepare("
@@ -44,8 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket = $pdo->prepare("SELECT * FROM tickets WHERE id = ?");
     $ticket->execute([$ticketId]);
     $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
-
-
+    echo''.$ticketDetails.'';
     // Génération du QR code
     // $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
     $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
@@ -68,6 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $qrFile = "{$qrDir}ticket_{$name}.png";
     $writer->write($qrCode)->saveToFile($qrFile);
 
+    // Encodage des détails du ticket en JSON avant redirection
+    $ticketDetailsJson = json_encode($ticketDetails);
+    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetailsJson));
+    exit();
+
 }
 ?>
 
@@ -89,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: url('assets/images/background.jpeg') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         /* Overlay for blur effect */
@@ -119,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         /* Centered modal form */
         .form-container {
             position: relative;
-            top: 50%;
+            top: 48%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: #002147; /* #ffffff;*/
@@ -176,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Accueil</a>
+                        <a class="nav-link active" aria-current="page" href="index.html">Accueil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="index.php#about">À propos</a>
@@ -196,91 +207,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="overlay"></div>
 
     <!-- Centered Form -->
-    <div class="form-container">
-        <h1>Achetez vos tickets</h1>
-        <form method="POST">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nom</label>
-                    <input type="text" name="name" id="name" class="form-control" required>
-                </div>
+    <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="form-container">
+                <h1>Achetez vos tickets</h1>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nom</label>
+                        <input type="text" name="name" id="name" class="form-control" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="prenom" class="form-label">Prénom</label>
-                    <input type="text" name="prenom" id="prenom" class="form-control" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="prenom" class="form-label">Prénom</label>
+                        <input type="text" name="prenom" id="prenom" class="form-control" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="telephone" class="form-label">Téléphone</label>
-                    <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" class="form-control" placeholder="0162898017" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="telephone" class="form-label">Téléphone</label>
+                        <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" 
+                               class="form-control" placeholder="0162898017" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="type" class="form-label">Type de ticket</label>
-                    <select name="type" id="type" class="form-select" required>
-                        <option value="Solo">Solo</option>
-                        <option value="Couple">Couple</option>
-                    </select>
-                </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type de ticket</label>
+                        <select name="type" id="type" class="form-select" required>
+                            <option value="Solo">Solo</option>
+                            <option value="Couple">Couple</option>
+                        </select>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="preference_vin" class="form-label">Préférence en vin</label>
-                    <select name="preference_vin" id="preference_vin" class="form-select" required>
-                        <option value="vin blanc">Vin Blanc</option>
-                        <option value="vin rouge">Vin Rouge</option>
-                        <option value="bierre">Bière</option>
-                        <option value="sucrerie">Sucrerie</option>
-                    </select>
-                </div>
+                    <div class="mb-3">
+                        <label for="preference_vin" class="form-label">Préférence en vin</label>
+                        <select name="preference_vin" id="preference_vin" class="form-select" required>
+                            <option value="vin blanc">Vin Blanc</option>
+                            <option value="vin rouge">Vin Rouge</option>
+                            <option value="bierre">Bière</option>
+                            <option value="sucrerie">Sucrerie</option>
+                        </select>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="shooting" class="form-label">Shooting avec l'artiste</label>
-                    <select name="shooting" id="shooting" class="form-select" required>
-                        <option value="no">Non</option>
-                        <option value="yes">Oui (+1000f)</option>
-                    </select>
-                </div>
+                    <div class="mb-3">
+                        <label for="shooting" class="form-label">Shooting avec l'artiste</label>
+                        <select name="shooting" id="shooting" class="form-select" required>
+                            <option value="no">Non</option>
+                            <option value="yes">Oui (+1000f)</option>
+                        </select>
+                    </div>
 
-                
-                <div class="text-center">
-    <button id="payNow" type="button" class="alert alert-success">PAYER MAINTENANT</button>
-</div>
-
-<script>
-    document.getElementById("payNow").addEventListener("click", function (e) {
-        e.preventDefault();
-
-        // Validation des champs
-        const name = document.getElementById("name").value.trim();
-        const prenom = document.getElementById("prenom").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const telephone = document.getElementById("telephone").value.trim();
-
-        if (!name || !prenom || !email || !telephone) {
-            alert("Veuillez remplir tous les champs !");
-            return;
-        }
-
-        // Appel du widget Kkiapay
-        openKkiapayWidget({
-            amount: <?= isset($cost) ? $cost : 0 ?>,
-            position: "center",
-            callback: `http://localhost:8000/gala_fev2025/confirm.php?ticketDetails=<?= isset($ticketDetails) ? $ticketDetails : 0 ?>&qrFile=<?= isset($qrFile) ? urlencode($qrFile) : '' ?>`,
-            name: 'Gala Event',
-            reason: 'Achat de tickets',
-            theme: "green",
-            key: "039854d0d8c011ef815869eb5750a6f1",
-            sandbox:"true"
-        });
-    });
-</script>
-
-</form>
+                    <button class="kkiapay-widget" type="submit">Acheter</button>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
 
     <!-- Footer -->
     <footer>
