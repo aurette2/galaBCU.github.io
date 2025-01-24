@@ -1,8 +1,12 @@
 {
     "require": {
+        "php": ">=7.4",
         "ext-gd": "*",
         "endroid/qr-code": "^6.0",
         "fedapay/fedapay-php": "^0.4.3",
         "phpmailer/phpmailer": "^6.9"
+    },
+    "config": {
+        "platform-check": false
     }
 }
