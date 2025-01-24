@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket = $pdo->prepare("SELECT * FROM tickets WHERE id = ?");
     $ticket->execute([$ticketId]);
     $ticketDetails = $ticket->fetch(PDO::FETCH_ASSOC);
-    // echo''.$ticketDetails.'';
+    echo''.$ticketDetails['name'].'';
     // Génération du QR code
     // $qrData = "Ticket ID: $ticketId\nName: $name $prenom\nType: $type\nTotal Cost: $cost";
     $qrData = "Ticket ID: {$ticketDetails['id']}\n" .
@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $writer->write($qrCode)->saveToFile($qrFile);
 
     // Encodage des détails du ticket en JSON avant redirection
-    $ticketDetailsJson = json_encode($ticketDetails);
-    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetailsJson)."");
+    // $ticketDetailsJson = json_encode($ticketDetails);
+    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetails)."");
     exit();
 
 }
