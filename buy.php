@@ -140,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             max-width: 500px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
             z-index: 2;
+            margin-top:100px ;
         }
 
         h1 {
@@ -180,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.php"><?= SITE_NAME ?></a>
+            <a class="navbar-brand" href="index.html"><?= SITE_NAME ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -208,64 +209,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Centered Form -->
     <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-            <div class="form-container">
-                <h1>Achetez vos tickets</h1>
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nom</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
-                    </div>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="form-container">
+                    <h1>Achetez vos tickets</h1>
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="prenom" class="form-label">Prénom</label>
-                        <input type="text" name="prenom" id="prenom" class="form-control" required>
-                    </div>
+                        <div class="mb-3">
+                            <label for="prenom" class="form-label">Prénom</label>
+                            <input type="text" name="prenom" id="prenom" class="form-control" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" required>
-                    </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="telephone" class="form-label">Téléphone</label>
-                        <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" 
-                               class="form-control" placeholder="0162898017" required>
-                    </div>
+                        <div class="mb-3">
+                            <label for="telephone" class="form-label">Téléphone</label>
+                            <input type="tel" pattern="[0-9]{10}" name="telephone" id="telephone" 
+                                class="form-control" placeholder="0162898017" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Type de ticket</label>
-                        <select name="type" id="type" class="form-select" required>
-                            <option value="Solo">Solo</option>
-                            <option value="Couple">Couple</option>
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type de ticket</label>
+                            <select name="type" id="type" class="form-select" required>
+                                <option value="Solo">Solo</option>
+                                <option value="Couple">Couple</option>
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="preference_vin" class="form-label">Préférence en vin</label>
-                        <select name="preference_vin" id="preference_vin" class="form-select" required>
-                            <option value="vin blanc">Vin Blanc</option>
-                            <option value="vin rouge">Vin Rouge</option>
-                            <option value="bierre">Bière</option>
-                            <option value="sucrerie">Sucrerie</option>
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="preference_vin" class="form-label">Préférence en vin</label>
+                            <select name="preference_vin" id="preference_vin" class="form-select" required>
+                                <option value="vin blanc">Vin Blanc</option>
+                                <option value="vin rouge">Vin Rouge</option>
+                                <option value="bierre">Bière</option>
+                                <option value="sucrerie">Sucrerie</option>
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="shooting" class="form-label">Shooting avec l'artiste</label>
-                        <select name="shooting" id="shooting" class="form-select" required>
-                            <option value="no">Non</option>
-                            <option value="yes">Oui (+1000f)</option>
-                        </select>
-                    </div>
-
-                    <button class="kkiapay-widget" type="submit">Acheter</button>
-                </form>
+                        <div class="mb-3">
+                            <label for="shooting" class="form-label">Shooting avec l'artiste</label>
+                            <select name="shooting" id="shooting" class="form-select" required>
+                                <option value="no">Non</option>
+                                <option value="yes">Oui (+1000f)</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                        <button class="kkiapay-widget btn btn-primary w-100" type="submit">Acheter</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Footer -->
     <footer>
