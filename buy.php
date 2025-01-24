@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Encodage des détails du ticket en JSON avant redirection
     $ticketDetailsJson = json_encode($ticketDetails);
-    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetailsJson));
+    header("Location: pay.php?ticketDetails=" . urlencode($ticketDetailsJson)."");
     exit();
 
 }
@@ -191,13 +191,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a class="nav-link active" aria-current="page" href="index.html">Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php#about">À propos</a>
+                        <a class="nav-link" href="index.html#about">À propos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="buy.php">Acheter un ticket</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php#contact">Contact</a>
+                        <a class="nav-link" href="index.html#contact">Contact</a>
                     </li>
                 </ul>
             </div>

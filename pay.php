@@ -165,10 +165,10 @@ $cost = htmlspecialchars($ticketDetails['cost']);
                         <a class="nav-link active" aria-current="page" href="index.html">Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php#about">À propos</a>
+                        <a class="nav-link" href="index.html#about">À propos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php#contact">Contact</a>
+                        <a class="nav-link" href="index.html#contact">Contact</a>
                     </li>
                 </ul>
             </div>
