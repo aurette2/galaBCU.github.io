@@ -190,7 +190,7 @@ $cost = htmlspecialchars($ticketDetails['cost']);
                         key="134763e0d76111ef9e73d9bd36745045"
                         position="center" 
                         sandbox="true" 
-                        callback="https://galabcu.koyeb.app/confirm.php?name=<?= urlencode($name) ?>&prenom=<?= urlencode($prenom) ?>&email=<?= urlencode($email) ?>&cost=<?= $cost ?>">
+                        callback="http://localhost:8000/gala_fev2025/confirm.php?name=<?= urlencode($name) ?>&prenom=<?= urlencode($prenom) ?>&email=<?= urlencode($email) ?>&cost=<?= $cost ?>">
                     </kkiapay-widget>
                     </div>
                 </div>

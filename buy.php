@@ -6,8 +6,6 @@ require 'config.php';
 // Chargement des dépendances pour PHPMailer et QR Code
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 // use FedaPay\FedaPay; // SDK FedaPay
 
 
