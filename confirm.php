@@ -2,6 +2,10 @@
 include 'db.php'; // Connexion à la base de données
 require 'vendor/autoload.php'; // Chargement des bibliothèques nécessaires
 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // Vérification si les paramètres nécessaires sont présents dans l'URL
 if (!isset($_GET['transaction_id']) || !isset($_GET['name']) || !isset($_GET['prenom']) || !isset($_GET['email']) || !isset($_GET['cost'])) {
     die('Paramètres manquants dans la requête.');
@@ -14,22 +18,6 @@ $prenom = htmlspecialchars($_GET['prenom']);
 $email = htmlspecialchars($_GET['email']);
 $cost = (int) $_GET['cost'];
 
-// Vérification de la transaction via Kkiapay API
-$curl = curl_init();
-curl_setopt_array($curl, [
-    CURLOPT_URL => "https://api.kkiapay.me/api/v1/transactions/status?transactionId=$transactionId",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-        "Authorization: Bearer 134763e0d76111ef9e73d9bd36745045", // Clé d'authentification
-        "Content-Type: application/json"
-    ]
-]);
-
-$response = curl_exec($curl);
-curl_close($curl);
-
-$data = json_decode($response, true);
-
 // Génération du chemin du QR code
 $qrFile = "qrcodes/ticket_{$name}.png";
 if (!file_exists($qrFile)) {
@@ -37,7 +25,7 @@ if (!file_exists($qrFile)) {
 }
 
 // Vérification si la transaction est valide
-if ($data && isset($data['status']) && $data['status'] === 'SUCCESS') {
+if ($transactionId) {
     // Mise à jour du statut dans la base de données
     $stmt = $pdo->prepare("UPDATE tickets SET status = 'comfirmed', transaction_id = ? WHERE email = ? AND cost = ?");
     $stmt->execute([$transactionId, $email, $cost]);
