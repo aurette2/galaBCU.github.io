@@ -1,14 +1,16 @@
 <?php
-include 'db.php'; // Connexion à la base de données
-require 'vendor/autoload.php'; // Chargement des bibliothèques nécessaires
-
+require 'vendor/autoload.php';
+require 'db.php';
 require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
-$mail = new PHPMailer(true); // true pour activer les exceptions
 use PHPMailer\PHPMailer\Exception;
+
+
+// Ensuite, instanciez la classe correctement
+$mail = new PHPMailer(true); // Active les exceptions
 
 // Vérification si les paramètres nécessaires sont présents dans l'URL
 if (!isset($_GET['transaction_id']) || !isset($_GET['name']) || !isset($_GET['prenom']) || !isset($_GET['email']) || !isset($_GET['cost'])) {
@@ -34,7 +36,7 @@ if (!file_exists($qrFile)) {
 
 // Envoi d'un email avec le ticket
 try {
-    $mail = new PHPMailer\PHPMailer\PHPMailer();
+    $mail = new PHPMailer();
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
@@ -132,7 +134,7 @@ echo "<!DOCTYPE html>
     </style>
     <title>Confirmation de Paiement</title>
 </head>
-<body class='bg-light'>
+<body class='bg-withe'>
     <div class='container mt-5'>
         <div class='shadow p-4'>
             <h1 class='text-success'>Paiement réussi !</h1>
